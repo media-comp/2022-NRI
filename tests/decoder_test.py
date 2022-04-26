@@ -50,8 +50,8 @@ else:
 # train_loader, valid_loader, test_loader, loc_max, loc_min, vel_max, vel_min = load_data(args.batch_size, suffix=args.data_suffix, root=False)
 
 # Comment the following codes if your are using Dataloader class data
-test_series = np.load("test.npy")
-test_edges = np.load("edge_type.npy")
+test_series = np.load("../data/test.npy")
+test_edges = np.load("../data/edge_type.npy")
 test_series = torch.tensor(test_series)
 test_edges = torch.tensor(test_edges)
 print('Data loader generated')
