@@ -52,7 +52,7 @@ The visualization part of `run_encoder.py` is still under consideration.
 <img src="figures/demo_grand_truth.gif" alt="Drawing" style="width: 300px;"/> 
 </figure></td>
 <td> <figure>
-  <img src="figures/demo_model_out.gif" alt="Drawing" style="width: 300px;"/>
+  <img src="figures/step1.gif" alt="Drawing" style="width: 340px;"/>
 </figure></td>
 </tr>
 <tr>
@@ -60,6 +60,7 @@ The visualization part of `run_encoder.py` is still under consideration.
   <td> <center>Prediction trajectory</center></td>
 </tr>  
 </table>
+
 
 
 ## TODOs
