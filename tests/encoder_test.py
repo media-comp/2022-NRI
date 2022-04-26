@@ -45,8 +45,8 @@ else:
     
 
 # Comment the following codes if your are using Dataloader class data
-test_series = np.load("test.npy")
-test_edges = np.load("edge_type.npy")
+test_series = np.load("../data/test.npy")
+test_edges = np.load("../data/edge_type.npy")
 test_series = torch.tensor(test_series)
 test_edges = torch.tensor(test_edges)
 
