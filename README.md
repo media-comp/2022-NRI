@@ -42,6 +42,7 @@ Notice that GPU is not necessary for training. You can train the model in a shor
 
 We provide `run_decoder.py` and `run_encoder.py` for generating trajectory based on trained model. The steps are the followings.
 
+0. Follow the Prerequisites.
 1. You can train a new model or use existing models. All trained models are saved in the folder `saved_model`. To use the model, specify the model path in the arguments of `run_decoder.py` and `run_encoder.py` correspondingly.
 2. Specify datasets and network structural arguments in `run_decoder.py` and `run_encoder.py`. Run the script.
 3. Run the script. The model output will be saved in the folder `saved_results`.
