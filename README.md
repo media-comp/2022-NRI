@@ -22,7 +22,7 @@ Next, create a local package (named `src`). Notice that `-e` indicates that the 
 pip install -e.
 ```
 
-Use `scripts/generate_dataset.py` to generate simulation data. You can use simulation data for both training and testing. All model input data will be saved in the `data` folder. In the `data` folder, we already provided two `.npy` files ONLY for testing.
+Use `scripts/generate_dataset.py` to generate simulation data. You can use simulation data for both training and testing. All model input data will be saved in the `data` folder.
 
 ## Model training and testing
 
@@ -36,7 +36,7 @@ The best model (among all epochs) is obtained through validation. The best model
 
 You can further adjust training arguments. For details, use `python train_enc.py  -h`.
 
-Notice that GPU is not necessary for training. You can train the model in a short time on a CPU platform. 
+Notice that GPU is not necessary for training. 
 
 ## Run demo
 
@@ -70,7 +70,7 @@ Appreciate any helps for the followings issues.
 
 1. Test and add support for GPU platform. 
 2. MLP building block has been implemented for the encoder and decoder. Consider other building blocks (e.g. CNN, RNN). To do this, implement other class inside `nri_decoder.py` and `nri_encoder.py`.
-3. For data without ground truth edge information, we need to combine the encoder and the decoder together.
+3. For data without ground truth edge information, train the encoder and the decoder together under the VAE scheme.
 4. Visualization for encoder output result.
 
 Any minor adjustments are also welcomed! 
