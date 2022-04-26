@@ -46,8 +46,16 @@ if args.cuda and torch.cuda.is_available():
 else:
     print('No GPU provided.')
 
-train_loader, valid_loader, test_loader, loc_max, loc_min, vel_max, vel_min = load_data(args.batch_size, suffix=args.data_suffix, root=False)
+# Uncomment if you are using Dataloader class data
+# train_loader, valid_loader, test_loader, loc_max, loc_min, vel_max, vel_min = load_data(args.batch_size, suffix=args.data_suffix, root=False)
+
+# Comment the following codes if your are using Dataloader class data
+test_series = np.load("../data/test.npy")
+test_edges = np.load("../data/edge_type.npy")
+test_loader = zip(test_series, test_edges)
+
 print('Data loader generated')
+
 for batch_idx, (input_batch, relations) in enumerate(test_loader):
     rel_type_onehot = torch.FloatTensor(input_batch.size(0), rec_mask.size(0),args.edge_types)
     rel_type_onehot.zero_()
