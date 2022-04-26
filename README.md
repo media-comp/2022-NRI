@@ -10,7 +10,7 @@ Reimplementation of the **N**eural **R**elation **I**nference proposed in the fo
 
 ## Prerequisites
 
-Recommend using conda virtual environment. A `environment.yml` file has been set up. Simply run the following command to setup the required environment.
+Recommend using conda virtual environment. An `environment.yml` file has been set up. Simply run the following command to setup the required environment.
 
 ```
 conda env create --name recoveredenv --file environment.yml
@@ -38,8 +38,12 @@ Notice that GPU is not necessary for training. You can train the model in a shor
 
 ## Run demo
 
-We provide `run_decoder.py` and `run_encoder.py` for generating trajectory based on trained model. The generated trajectory will be save in the `saved_results` folder. 
-Then use the notebook `traj_plot.ipynb` to plot a gif.
+We provide `run_decoder.py` and `run_encoder.py` for generating trajectory based on trained model. The steps are the followings.
+
+1. You can train a new model or use existing models. All trained models are saved in the folder `saved_model`. To use the model, specify the model path in the arguments of `run_decoder.py` and `run_encoder.py` correspondingly.
+2. Specify datasets and network arguments in `run_decoder.py` and `run_encoder.py`. Run the script.
+3. Run the script. The model output will be saved in the folder `saved_results`.
+4. For decoder output, you can use `traj_plot.ipynb` to generate a gif visualization.
 
 The visualization part of `run_encoder.py` is still under consideration. 
 
@@ -60,5 +64,13 @@ The visualization part of `run_encoder.py` is still under consideration.
 
 ## TODOs
 
+Appreciate any helps for the followings issues.
+
+1. Test and add support for GPU platform. 
+2. MLP building block has been implemented for the encoder and decoder. Consider other building blocks (e.g. CNN, RNN). To do this, implement other class inside `nri_decoder.py` and `nri_encoder.py`.
+3. For data without ground truth edge information, we need to combine the encoder and the decoder together.
 
 
+
+The Github Actions test whether data can flow through the trained model. 
+You can use two test files in the `tests` folder. Change the arguments of the test files and then run the workflow.
