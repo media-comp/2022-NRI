@@ -83,6 +83,5 @@ print('Tests finish')
 #         input_batch.cuda()
 #         rel_type_onehot.cuda()
 #     output = model(input_batch, rel_type_onehot, send_mask, rec_mask, args.pred_steps)  
-
 # print('Tests finish')
 

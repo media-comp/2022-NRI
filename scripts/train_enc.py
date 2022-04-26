@@ -160,7 +160,7 @@ def train(args):
 
         # Save the model if the model performance is improved.
         # Print out messages
-        if np.mean(acc_val) > best_acc + 1e-4:
+        if np.mean(acc_val) > best_acc:
             best_acc = np.mean(acc_val)
             best_model_path = model_path
             if not os.path.exists(best_model_path):
@@ -216,7 +216,7 @@ if __name__ == "__main__":
     np.random.seed(42)
     torch.manual_seed(42)
 
-    # args, model, loaders are global variable
+    # args, model, loaders are Global variable
     args = parse_args()
     send_mask, rec_mask = mask(args.nodes)
     train_loader, valid_loader, test_loader, loc_max, loc_min, vel_max, vel_min = load_data(

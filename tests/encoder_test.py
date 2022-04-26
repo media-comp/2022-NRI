@@ -48,12 +48,10 @@ test_series = np.load("../data/test.npy")
 test_edges = np.load("../data/edge_type.npy")
 test_series = torch.tensor(test_series)
 test_edges = torch.tensor(test_edges)
-
 print('Data loader generated')
 
 data = test_series[:, :, :args.time_steps, :]
 output = model(data, send_mask, rec_mask)
-
 print('Tests finished')
 
 # Uncomment if you are using Dataloader class
@@ -62,11 +60,9 @@ print('Tests finished')
 
 # for batch_idx, (data, target) in enumerate(test_loader):
 #     if args.cuda and torch.cuda.is_available():
-#         input_batch.cuda()
+#         data.cuda()
 #         target.cuda()
-#     data = data[:, :, :args.time_steps, :] # .contiguous()
-    
+#     data = data[:, :, :args.time_steps, :] 
 #     output = model(data, send_mask, rec_mask)
 #     output = output.view(-1, args.edge_types)
-
 # print('Tests finished')

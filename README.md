@@ -22,7 +22,7 @@ Next, create a local package (named `src`). Notice that `-e` indicates that the 
 pip install -e.
 ```
 
-Use `scripts/generate_dataset.py` to generate simulation data. You can use simulation data for both training and testing. All model input data will be saved in the `data` folder.
+Use `scripts/generate_dataset.py` to generate simulation data. You can use simulation data for both training and testing. All model input data will be saved in the `data` folder. In the `data` folder, we already provided two `.npy` files ONLY for testing.
 
 ## Model training and testing
 
