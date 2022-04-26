@@ -61,7 +61,7 @@ ret_target = np.zeros(
 
 for batch_idx, (data, target) in enumerate(test_loader):
     if args.cuda and torch.cuda.is_available():
-        input_batch.cuda()
+        data.cuda()
         target.cuda()
     data = data[:, :, :args.time_steps, :]  # .contiguous()
 

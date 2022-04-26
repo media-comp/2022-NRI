@@ -38,13 +38,12 @@ if args.cuda and torch.cuda.is_available():
     model.cuda()
     send_mask.cuda()
     rec_mask.cuda()
-if args.cuda and not torch.cuda.is_available():
-    print('No GPU provided.')
-else:
+if args.cuda and torch.cuda.is_available():
     print('Run in GPU')
-    
+else:
+    print('No GPU provided.')
 
-# Comment the following codes if your are using Dataloader class data
+# Comment the following codes if your are using Dataloader class
 test_series = np.load("../data/test.npy")
 test_edges = np.load("../data/edge_type.npy")
 test_series = torch.tensor(test_series)
@@ -53,12 +52,11 @@ test_edges = torch.tensor(test_edges)
 print('Data loader generated')
 
 data = test_series[:, :, :args.time_steps, :]
-print(data.shape)
 output = model(data, send_mask, rec_mask)
 
 print('Tests finished')
 
-# Uncomment if you are using Dataloader class data
+# Uncomment if you are using Dataloader class
 # train_loader, valid_loader, test_loader, loc_max, loc_min, vel_max, vel_min = load_data(args.batch_size, suffix=args.data_suffix, root=False)
 # print('Data loader generated')
 
@@ -70,6 +68,5 @@ print('Tests finished')
     
 #     output = model(data, send_mask, rec_mask)
 #     output = output.view(-1, args.edge_types)
-#     target = target.view(-1)
 
 # print('Tests finished')

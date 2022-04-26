@@ -46,7 +46,7 @@ if args.cuda and torch.cuda.is_available():
 else:
     print('No GPU provided.')
 
-# Uncomment if you are using Dataloader class data
+# Uncomment if you are using Dataloader class
 # train_loader, valid_loader, test_loader, loc_max, loc_min, vel_max, vel_min = load_data(args.batch_size, suffix=args.data_suffix, root=False)
 
 # Comment the following codes if your are using Dataloader class data
@@ -69,7 +69,7 @@ print('Tests finish')
 
 
 
-# Uncomment if you are using Dataloader class data
+# Uncomment if you are using Dataloader class
 # train_loader, valid_loader, test_loader, loc_max, loc_min, vel_max, vel_min = load_data(args.batch_size, suffix=args.data_suffix, root=False)
 # print('Data loader generated')
 
@@ -82,7 +82,6 @@ print('Tests finish')
 #     if args.cuda and torch.cuda.is_available():
 #         input_batch.cuda()
 #         rel_type_onehot.cuda()
-#     target = input_batch[:,:,1:,:]
 #     output = model(input_batch, rel_type_onehot, send_mask, rec_mask, args.pred_steps)  
 
 # print('Tests finish')

@@ -187,7 +187,7 @@ def test(args, best_model_path):
     model.load_state_dict(torch.load(best_model_path + 'model.ckpt'))
     for batch_idx, (data, target) in enumerate(test_loader):
         if args.cuda and torch.cuda.is_available():
-            input_batch.cuda()
+            data.cuda()
             target.cuda()
 
         data = data[:, :, :args.time_steps, :]  # .contiguous()

@@ -72,7 +72,7 @@ Appreciate any helps for the followings issues.
 3. For data without ground truth edge information, we need to combine the encoder and the decoder together.
 4. Visualization for encoder output result.
 
-Any minor adjustments are also welcomed! :smile:
+Any minor adjustments are also welcomed! 
 
 The Github Actions test whether data can flow through the trained model.
 You can use two test files in the `tests` folder. 
