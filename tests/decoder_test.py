@@ -50,23 +50,40 @@ else:
 # train_loader, valid_loader, test_loader, loc_max, loc_min, vel_max, vel_min = load_data(args.batch_size, suffix=args.data_suffix, root=False)
 
 # Comment the following codes if your are using Dataloader class data
-test_series = np.load("../data/test.npy")
-test_edges = np.load("../data/edge_type.npy")
-test_loader = zip(test_series, test_edges)
-
+test_series = np.load("test.npy")
+test_edges = np.load("edge_type.npy")
+test_series = torch.tensor(test_series)
+test_edges = torch.tensor(test_edges)
 print('Data loader generated')
 
-for batch_idx, (input_batch, relations) in enumerate(test_loader):
-    rel_type_onehot = torch.FloatTensor(input_batch.size(0), rec_mask.size(0),args.edge_types)
-    rel_type_onehot.zero_()
-    rel_type_onehot.scatter_(2, relations.view(input_batch.size(0), -1, 1), 1)
-    input_batch = input_batch[:, :, -args.time_steps_test:, :] 
+rel_type_onehot = torch.FloatTensor(test_series.size(0), rec_mask.size(0), args.edge_types)
+rel_type_onehot.zero_()
+rel_type_onehot.scatter_(2, test_edges.view(test_series.size(0), -1, 1), 1)
+test_series = test_series[:, :, -args.time_steps_test:, :] 
                     
-    if args.cuda and torch.cuda.is_available():
-        input_batch.cuda()
-        rel_type_onehot.cuda()
-    target = input_batch[:,:,1:,:]
-    output = model(input_batch, rel_type_onehot, send_mask, rec_mask, args.pred_steps)  
-
+if args.cuda and torch.cuda.is_available():
+    test_series.cuda()
+    rel_type_onehot.cuda()
+output = model(test_series, rel_type_onehot, send_mask, rec_mask, args.pred_steps)  
 print('Tests finish')
+
+
+
+# Uncomment if you are using Dataloader class data
+# train_loader, valid_loader, test_loader, loc_max, loc_min, vel_max, vel_min = load_data(args.batch_size, suffix=args.data_suffix, root=False)
+# print('Data loader generated')
+
+# for batch_idx, (input_batch, relations) in enumerate(test_loader):
+#     rel_type_onehot = torch.FloatTensor(input_batch.size(0), rec_mask.size(0),args.edge_types)
+#     rel_type_onehot.zero_()
+#     rel_type_onehot.scatter_(2, relations.view(input_batch.size(0), -1, 1), 1)
+#     input_batch = input_batch[:, :, -args.time_steps_test:, :] 
+                    
+#     if args.cuda and torch.cuda.is_available():
+#         input_batch.cuda()
+#         rel_type_onehot.cuda()
+#     target = input_batch[:,:,1:,:]
+#     output = model(input_batch, rel_type_onehot, send_mask, rec_mask, args.pred_steps)  
+
+# print('Tests finish')
 

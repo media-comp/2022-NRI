@@ -74,5 +74,5 @@ Appreciate any helps for the followings issues.
 
 Any minor adjustments are also welcomed! :smile:
 
-The Github Actions test whether data can flow through the trained model (under construction). 
-You can use two test files in the `tests` folder. Change the arguments of the test files and then manually run the scripts.
+The Github Actions test whether data can flow through the trained model.
+You can use two test files in the `tests` folder. 

@@ -43,24 +43,33 @@ if args.cuda and not torch.cuda.is_available():
 else:
     print('Run in GPU')
     
-# Uncomment if you are using Dataloader class data
-# train_loader, valid_loader, test_loader, loc_max, loc_min, vel_max, vel_min = load_data(args.batch_size, suffix=args.data_suffix, root=False)
 
 # Comment the following codes if your are using Dataloader class data
-test_series = np.load("../data/test.npy")
-test_edges = np.load("../data/edge_type.npy")
-test_loader = zip(test_series, test_edges)
+test_series = np.load("test.npy")
+test_edges = np.load("edge_type.npy")
+test_series = torch.tensor(test_series)
+test_edges = torch.tensor(test_edges)
 
 print('Data loader generated')
 
-for batch_idx, (data, target) in enumerate(test_loader):
-    if args.cuda and torch.cuda.is_available():
-        input_batch.cuda()
-        target.cuda()
-    data = data[:, :, :args.time_steps, :] # .contiguous()
-    
-    output = model(data, send_mask, rec_mask)
-    output = output.view(-1, args.edge_types)
-    target = target.view(-1)
+data = test_series[:, :, :args.time_steps, :]
+print(data.shape)
+output = model(data, send_mask, rec_mask)
 
 print('Tests finished')
+
+# Uncomment if you are using Dataloader class data
+# train_loader, valid_loader, test_loader, loc_max, loc_min, vel_max, vel_min = load_data(args.batch_size, suffix=args.data_suffix, root=False)
+# print('Data loader generated')
+
+# for batch_idx, (data, target) in enumerate(test_loader):
+#     if args.cuda and torch.cuda.is_available():
+#         input_batch.cuda()
+#         target.cuda()
+#     data = data[:, :, :args.time_steps, :] # .contiguous()
+    
+#     output = model(data, send_mask, rec_mask)
+#     output = output.view(-1, args.edge_types)
+#     target = target.view(-1)
+
+# print('Tests finished')
