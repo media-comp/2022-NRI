@@ -22,6 +22,8 @@ Next, create a local package (named `src`). Notice that `-e` indicates that the 
 pip install -e.
 ```
 
+Use `scripts/generate_dataset.py` to generate simulation data. You can use simulation data for both training and testing. All model input data will be saved in the `data` folder.
+
 ## Model training and testing
 
 Run the following code to train the encoder and the decoder respectively. 
@@ -41,7 +43,7 @@ Notice that GPU is not necessary for training. You can train the model in a shor
 We provide `run_decoder.py` and `run_encoder.py` for generating trajectory based on trained model. The steps are the followings.
 
 1. You can train a new model or use existing models. All trained models are saved in the folder `saved_model`. To use the model, specify the model path in the arguments of `run_decoder.py` and `run_encoder.py` correspondingly.
-2. Specify datasets and network arguments in `run_decoder.py` and `run_encoder.py`. Run the script.
+2. Specify datasets and network structural arguments in `run_decoder.py` and `run_encoder.py`. Run the script.
 3. Run the script. The model output will be saved in the folder `saved_results`.
 4. For decoder output, you can use `traj_plot.ipynb` to generate a gif visualization.
 
@@ -60,8 +62,6 @@ The visualization part of `run_encoder.py` is still under consideration.
   <td> <center>Prediction trajectory</center></td>
 </tr>  
 </table>
-
-
 
 ## TODOs
 
