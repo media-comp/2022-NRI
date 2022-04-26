@@ -27,7 +27,7 @@ Use `scripts/generate_dataset.py` to generate simulation data. You can use simul
 ## Model training and testing
 
 Run the following code to train the encoder and the decoder respectively. 
-When the best model (selected through validation) is obtained, test the model.
+The best model (among all epochs) is obtained through validation. The best model will then be tested.
 
 ```
 /scripts$ python train_enc.py
@@ -70,8 +70,9 @@ Appreciate any helps for the followings issues.
 1. Test and add support for GPU platform. 
 2. MLP building block has been implemented for the encoder and decoder. Consider other building blocks (e.g. CNN, RNN). To do this, implement other class inside `nri_decoder.py` and `nri_encoder.py`.
 3. For data without ground truth edge information, we need to combine the encoder and the decoder together.
+4. Visualization for encoder output result.
 
-
+Any minor adjustments are also welcomed! :smile:
 
 The Github Actions test whether data can flow through the trained model. 
 You can use two test files in the `tests` folder. Change the arguments of the test files and then run the workflow.
