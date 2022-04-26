@@ -44,7 +44,7 @@ We provide `run_decoder.py` and `run_encoder.py` for generating trajectory based
 
 0. Follow the Prerequisites.
 1. You can train a new model or use existing models. All trained models are saved in the folder `saved_model`. To use the model, specify the model path in the arguments of `run_decoder.py` and `run_encoder.py` correspondingly.
-2. Specify datasets and network structural arguments in `run_decoder.py` and `run_encoder.py`. Run the script.
+2. Specify datasets and network structural arguments in `run_decoder.py` and `run_encoder.py`. 
 3. Run the script. The model output will be saved in the folder `saved_results`.
 4. For decoder output, you can use `traj_plot.ipynb` to generate a gif visualization.
 
