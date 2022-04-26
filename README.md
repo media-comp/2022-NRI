@@ -16,7 +16,7 @@ Recommend using conda virtual environment. An `environment.yml` file has been se
 conda env create --name recoveredenv --file environment.yml
 ```
 
-Next, create a local package (named `src`). Notice that `-e` indicates that the package is editable (no need to reinstall ) and `.` indicates the current folder. This approach takes the advantage of python package system. 
+Next, create a local package (named `src`). This approach takes the advantage of python package system. 
 
 ```
 pip install -e.
