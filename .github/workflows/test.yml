@@ -27,8 +27,8 @@ jobs:
             - name: Install local packages
               run: |
                   pip install -e.
-            - name: Run trained model
-              working-directory: ./tests
-              run : |
-                  python encoder_test.py
-                  python decoder_test.py
+#             - name: Run trained model
+#               working-directory: ./tests
+#               run : |
+#                   python encoder_test.py
+#                   python decoder_test.py
