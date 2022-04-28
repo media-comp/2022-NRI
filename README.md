@@ -16,6 +16,18 @@ Recommend using conda virtual environment. An `environment.yml` file has been se
 conda env create --name recoveredenv --file environment.yml
 ```
 
+If you would like to use GPU, run the following command:
+
+```shell
+conda env create --name recoveredenv --file environment-cuda.yml
+```
+
+After creating the environment, activate it by running
+
+```shell
+conda activate recoveredenv
+```
+
 Next, create a local package (named `src`). This approach takes the advantage of python package system. 
 
 ```
@@ -37,6 +49,17 @@ The best model (among all epochs) is obtained through validation. The best model
 You can further adjust training arguments. For details, use `python train_enc.py  -h`.
 
 Notice that GPU is not necessary for training. 
+
+### GPU support
+
+Run all the scripts with the `--cuda` flag. For example:
+
+```shell
+python train_enc.py --cuda
+python train_dec.py --cuda
+python run_encoder.py --cuda
+python run_decoder.py --cuda
+```
 
 ## Run demo
 

@@ -50,12 +50,16 @@ def parse_args():
                         type=int,
                         help="Number of edge types",
                         default=2)
+
+    # added action to --cuda argument, this will give a bool value rather than a string or
+    # integer, and changed the default to false. With action='store_true', you can use it as a flag,
+    # just use --cuda to enable cuda
     parser.add_argument('-cuda',
                         '--cuda',
                         dest='cuda',
-                        type=int,
-                        help="Use cuda or not",
-                        default=True)
+                        default=False,
+                        help='Use this flag if you want to run on GPU',
+                        action='store_true')
     parser.add_argument('-dr',
                         '--dropout_rate',
                         dest='dropout',
@@ -105,9 +109,8 @@ def train(args):
             # forward pass
             # print(input_batch.shape)
 
-            if args.cuda and torch.cuda.is_available():
-                input_batch.cuda()
-                target.cuda()
+            input_batch = input_batch.to(device)
+            target = target.to(device)
 
             output = model(input_batch, send_mask, rec_mask)
 
@@ -132,7 +135,7 @@ def train(args):
 
             # Append results
             loss_train.append(loss.item())
-            acc_train.append(acc)
+            acc_train.append(acc.item())
 
     # print(np.mean(loss_train))
     # print(np.mean(acc_train))
@@ -141,9 +144,8 @@ def train(args):
         model.eval()
         for batch_index, (input_batch, target) in enumerate(valid_loader):
 
-            if args.cuda and torch.cuda.is_available():
-                input_batch.cuda()
-                target.cuda()
+            input_batch = input_batch.to(device)
+            target = target.to(device)
 
             output = model(input_batch, send_mask, rec_mask)
             output = output.view(-1, args.edge_types)
@@ -156,7 +158,7 @@ def train(args):
             acc = correct / pred.size(0)
 
             loss_val.append(loss.item())
-            acc_val.append(acc)
+            acc_val.append(acc.item())
 
         # Save the model if the model performance is improved.
         # Print out messages
@@ -186,9 +188,8 @@ def test(args, best_model_path):
     model.eval()
     model.load_state_dict(torch.load(best_model_path + 'model.ckpt'))
     for batch_idx, (data, target) in enumerate(test_loader):
-        if args.cuda and torch.cuda.is_available():
-            data.cuda()
-            target.cuda()
+        data = data.to(device)
+        target = target.to(device)
 
         data = data[:, :, :args.time_steps, :]  # .contiguous()
         # print(data.shape)
@@ -204,7 +205,7 @@ def test(args, best_model_path):
         acc = correct / pred.size(0)
 
         loss_test.append(loss.item())
-        acc_test.append(acc)
+        acc_test.append(acc.item())
 
     print('-------------testing finish-----------------')
     print(f'load model from: {best_model_path}')
@@ -215,21 +216,24 @@ def test(args, best_model_path):
 if __name__ == "__main__":
     np.random.seed(42)
     torch.manual_seed(42)
+    torch.cuda.manual_seed(42)  # can be safely used even for CPU runs, ignored silently
 
     # args, model, loaders are Global variable
     args = parse_args()
+
+    # get the device based on availability and args flag
+    device = 'cuda' if args.cuda and torch.cuda.is_available() else 'cpu'
+
     send_mask, rec_mask = mask(args.nodes)
     train_loader, valid_loader, test_loader, loc_max, loc_min, vel_max, vel_min = load_data(
         batch_size=10, suffix='_springsLight5', root=False)
     model = MLPEncoder(args.time_steps * args.node_dims, args.hidden_dims,
-                       args.edge_types, args.dropout)
+                       args.edge_types, args.dropout).to(device)
 
-    if args.cuda and torch.cuda.is_available():
-        torch.cuda.manual_seed(42)
-        model.cuda()
-        send_mask.cuda()
-        rec_mask.cuda()
-    if args.cuda and torch.cuda.is_available():
+    send_mask = send_mask.to(device)
+    rec_mask = rec_mask.to(device)
+
+    if device == 'cuda':
         print('Run in GPU.')
     else:
         print('No GPU provided.')

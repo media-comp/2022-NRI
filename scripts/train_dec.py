@@ -85,11 +85,15 @@ def parse_args():
                         type=int,
                         help="Number of nodes in the interacting system",
                         default=5)
-    parser.add_argument('-c',
+    # added action to --cuda argument, this will give a bool value rather than a string or
+    # integer, and changed the default to false. With action='store_true', you can use it as a flag,
+    # just use --cuda to enable cuda
+    parser.add_argument('-cuda',
                         '--cuda',
                         dest='cuda',
-                        help="Use cuda or not",
-                        default=False)
+                        default=False,
+                        help='Use this flag if you want to run on GPU',
+                        action='store_true')
 
     return parser.parse_args()
 
@@ -141,17 +145,17 @@ def train(args):
         # If model is improved, the model will be saved to this direcotry.
         model_path = f'../saved_model/decoder/{timestr}/{i}/'
         for batch_index, (input_batch, relations) in enumerate(train_loader):
+            input_batch = input_batch.to(device)
+            relations = relations.to(device)
+
+            # create the following tensor directly on device, rather than create on cpu and transfer to gpu
             # rel_type_onehot is one-hot encoding for the ground truth relations
             rel_type_onehot = torch.FloatTensor(input_batch.size(0),
                                                 rec_mask.size(0),
-                                                args.edge_types)
+                                                args.edge_types).to(device)
             rel_type_onehot.zero_()
             rel_type_onehot.scatter_(
                 2, relations.view(input_batch.size(0), -1, 1), 1)
-
-            if args.cuda and torch.cuda.is_available():
-                input_batch.cuda()
-                rel_type_onehot.cuda()
 
             output = model(input_batch, rel_type_onehot, send_mask, rec_mask,
                            args.pred_steps)
@@ -171,16 +175,15 @@ def train(args):
         # Validate model performance
         model.eval()
         for batch_index, (input_batch, relations) in enumerate(valid_loader):
+            input_batch = input_batch.to(device)
+            relations = relations.to(device)
+
             rel_type_onehot = torch.FloatTensor(input_batch.size(0),
                                                 rec_mask.size(0),
-                                                args.edge_types)
+                                                args.edge_types).to(device)
             rel_type_onehot.zero_()
             rel_type_onehot.scatter_(
                 2, relations.view(input_batch.size(0), -1, 1), 1)
-
-            if args.cuda and torch.cuda.is_available():
-                input_batch.cuda()
-                rel_type_onehot.cuda()
 
             output = model(input_batch, rel_type_onehot, send_mask, rec_mask,
                            args.pred_steps)
@@ -219,17 +222,17 @@ def test(args, best_model_path):
     model.eval()
     model.load_state_dict(torch.load(best_model_path + 'model.ckpt'))
     for batch_idx, (input_batch, relations) in enumerate(test_loader):
+        input_batch = input_batch.to(device)
+        relations = relations.to(device)
+
         rel_type_onehot = torch.FloatTensor(input_batch.size(0),
-                                            rec_mask.size(0), args.edge_types)
+                                            rec_mask.size(0), args.edge_types).to(device)
         rel_type_onehot.zero_()
         rel_type_onehot.scatter_(2, relations.view(input_batch.size(0), -1, 1),
                                  1)
         input_batch = input_batch[:, :,
                                   -args.time_steps_test:, :]  
 
-        if args.cuda and torch.cuda.is_available():
-            input_batch.cuda()
-            rel_type_onehot.cuda()
         target = input_batch[:, :, 1:, :]
         output = model(input_batch, rel_type_onehot, send_mask, rec_mask,
                        args.pred_steps)
@@ -238,8 +241,8 @@ def test(args, best_model_path):
         loss_baseline = reconstruction_error(input_batch[:, :, :-1, :],
                                              input_batch[:, :, 1:, :])
 
-        loss_test.append(loss)
-        loss_baseline_test.append(loss_baseline)
+        loss_test.append(loss.item())
+        loss_baseline_test.append(loss_baseline.item())
 
     print('-------------testing finish-----------------')
     print(f'load model from: {best_model_path}')
@@ -251,19 +254,21 @@ if __name__ == "__main__":
 
     np.random.seed(42)
     torch.manual_seed(42)
+    torch.cuda.manual_seed(42)
 
     # args, model, loaders and masks are global variable
     args = parse_args()
+
+    # get the device based on availability and args flag
+    device = 'cuda' if args.cuda and torch.cuda.is_available() else 'cpu'
+
     send_mask, rec_mask = mask(args.num_nodes)
     model = MLPDecoder(args.node_dims, args.sep_hidden_dims, args.sep_out_dims,
-                       args.edge_types, args.hidden_dims, args.dropout)
+                       args.edge_types, args.hidden_dims, args.dropout).to(device)
+    send_mask = send_mask.to(device)
+    rec_mask = rec_mask.to(device)
 
-    if args.cuda and torch.cuda.is_available():
-        torch.cuda.manual_seed(42)
-        model.cuda()
-        send_mask.cuda()
-        rec_mask.cuda()
-    if args.cuda and torch.cuda.is_available():
+    if device == 'cuda':
         print('Run in GPU.')
     else:
         print('No GPU provided.')
