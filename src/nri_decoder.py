@@ -63,7 +63,7 @@ class MLPDecoder(nn.Module):
         # [batch_size, #time_steps, #nodes*(#nodes-1), edge_types]
         edge_rep = self.node2edge(node_input, send_mask, rec_mask)
         fused_input = torch.zeros(edge_rep.size(0), edge_rep.size(1),
-                                  edge_rep.size(2), self.sep_out_dims)
+                                  edge_rep.size(2), self.sep_out_dims).to(edge_rep.device)
         if self.skip_first_edge_type:
             start_idx = 1
         else:
@@ -127,9 +127,7 @@ class MLPDecoder(nn.Module):
             preds[0].size(3)
         ]
 
-        output = torch.zeros(sizes)
-        if inputs.is_cuda:
-            output = output.cuda()
+        output = torch.zeros(sizes).to(inputs.device)
 
         # Re-assemble correct timeline
         for i in range(len(preds)):

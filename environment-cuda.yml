@@ -1,0 +1,9 @@
+name: para_esn
+channels:
+  - pytorch
+dependencies:
+  - python=3.8
+  - numpy
+  - matplotlib
+  - cudatoolkit=10.2
+  - pytorch
