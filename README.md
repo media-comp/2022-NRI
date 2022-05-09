@@ -95,6 +95,7 @@ Appreciate any helps for the followings issues.
 2. MLP building block has been implemented for the encoder and decoder. Consider other building blocks (e.g. CNN, RNN). To do this, implement other class inside `nri_decoder.py` and `nri_encoder.py`.
 3. For data without ground truth edge information, train the encoder and the decoder together under the VAE scheme.
 4. Visualization for encoder output result.
+5. Add code comments.
 
 Any minor adjustments are also welcomed! 
 
