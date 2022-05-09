@@ -7,3 +7,4 @@ dependencies:
   - matplotlib
   - cudatoolkit=10.2
   - pytorch
+  - networkx
