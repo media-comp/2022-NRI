@@ -131,7 +131,7 @@ def train(args):
             # The predicted edge type is the one with largest value
             pred = output.data.max(1, keepdim=True)[1]
             correct = pred.eq(target.data.view_as(pred)).cpu().sum()
-            acc = correct / pred.size(0)
+            acc = correct / (target.size(0) * target.size(1))
 
             # Append results
             loss_train.append(loss.item())
@@ -155,7 +155,8 @@ def train(args):
 
             pred = output.data.max(1, keepdim=True)[1]
             correct = pred.eq(target.data.view_as(pred)).cpu().sum()
-            acc = correct / pred.size(0)
+            acc = correct / (target.size(0) * target.size(1))
+
 
             loss_val.append(loss.item())
             acc_val.append(acc.item())
@@ -202,7 +203,8 @@ def test(args, best_model_path):
 
         pred = output.data.max(1, keepdim=True)[1]
         correct = pred.eq(target.data.view_as(pred)).cpu().sum()
-        acc = correct / pred.size(0)
+        acc = correct / (target.size(0) * target.size(1))
+
 
         loss_test.append(loss.item())
         acc_test.append(acc.item())
