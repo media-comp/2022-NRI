@@ -119,18 +119,20 @@ def train(args):
     epoch_nums = args.epoch_num
     optimizer = optim.Adam(list(encoder.parameters()) + list(decoder.parameters()))
     scheduler = lr_scheduler.StepLR(optimizer, step_size=200, gamma=0.5)
-    criterion = nn.CrossEntropyLoss()
 
     # timestr will be used in model path.
     timestr = time.strftime("%Y%m%d_%H%M")
-    parent_folder = f'../saved_model/encoder/{timestr}'
+    parent_folder_enc = f'../saved_model/encoder/{timestr}'
+    parent_folder_dec = f'../saved_model/decoder/{timestr}'
 
     # Create a directory if not exist.
-    if not os.path.exists(parent_folder):
-        os.mkdir(parent_folder)
+    if not os.path.exists(parent_folder_enc):
+        os.mkdir(parent_folder_enc)
+    # Create a directory if not exist.
+    if not os.path.exists(parent_folder_dec):
+        os.mkdir(parent_folder_dec)
 
     best_acc = -1
-    best_model_path = ''
     for i in range(epoch_nums):
         loss_kl_train = []
         loss_rec_train = []
@@ -152,6 +154,7 @@ def train(args):
             input_batch = input_batch.to(device)
             target = target.to(device)
 
+            # Shape of `logits`: [batch_size, #nodes * (#nodes - 1), #edge_types]
             logits = encoder(input_batch, send_mask, rec_mask)
             
             # Sampling
@@ -160,9 +163,9 @@ def train(args):
             
             output = decoder(input_batch, edges, send_mask, rec_mask, args.pred_steps)
 
-            target = input_batch[:, :, 1:, :]
+            target_traj = input_batch[:, :, 1:, :]
             
-            loss_reconstrcution = reconstruction_error(output, target)
+            loss_reconstrcution = reconstruction_error(output, target_traj)
             
             # While the KL term for a uniform prior is just the sum of entropies (plus a constant)
             # https://arxiv.org/abs/1802.04687
@@ -180,17 +183,14 @@ def train(args):
             scheduler.step()
 
             # The predicted edge type is the one with largest value
-            pred = logits.data.max(1, keepdim=True)[1]
+            pred = logits.data.max(2, keepdim=True)[1]
             correct = pred.eq(target.data.view_as(pred)).cpu().sum()
-            acc = correct / pred.size(0)
+            acc = correct / (target.size(0) * target.size(1))
 
             # Append results
             loss_kl_train.append(loss_kl.item())
             loss_rec_train.append(loss_reconstrcution.item())
             acc_train.append(acc.item())
-
-        print(np.mean(loss_rec_train))
-        print(np.mean(acc_train))
 
     # Now tell the model that I want to test it
         encoder.eval()
@@ -208,9 +208,9 @@ def train(args):
             
             output = decoder(input_batch, edges, send_mask, rec_mask, args.pred_steps)
 
-            target = input_batch[:, :, 1:, :]
+            target_traj = input_batch[:, :, 1:, :]
             
-            loss_reconstrcution = reconstruction_error(output, target)
+            loss_reconstrcution = reconstruction_error(output, target_traj)
             
             # While the KL term for a uniform prior is just the sum of entropies (plus a constant)
             # https://arxiv.org/abs/1802.04687
@@ -218,9 +218,9 @@ def train(args):
 
             loss = loss_reconstrcution + loss_kl
             
-            pred = output.data.max(1, keepdim=True)[1]
+            pred = logits.data.max(2, keepdim=True)[1]
             correct = pred.eq(target.data.view_as(pred)).cpu().sum()
-            acc = correct / pred.size(0)
+            acc = correct / (target.size(0) * target.size(1))
 
             loss_rec_val.append(loss_reconstrcution.item())
             loss_kl_val.append(loss_kl.item())
@@ -243,9 +243,11 @@ def train(args):
 
             print('-----------------------------------------------')
             print(
-                f'epoch {i} encoder training finish. Model performance improved.'
+                f'epoch {i} VAE training finishes. Model performance improved.'
             )
-            print(f'validation acc {np.mean(acc_val)}')
+            print(f'Validation acc {np.mean(acc_val)}')
+            print(f'Validation recover loss {np.mean(loss_rec_val)}')
+
             print(f'save best model to {best_model_path_enc}, {best_model_path_dec}')
 
     return best_model_path_enc, best_model_path_dec
@@ -256,7 +258,6 @@ def test(args, best_model_path_enc, best_model_path_dec):
     loss_kl_test = []
     loss_rec_test = []
     acc_test = []
-    criterion = nn.CrossEntropyLoss()
     encoder.eval()
     decoder.eval()
     # Put parameters into the network
@@ -264,7 +265,8 @@ def test(args, best_model_path_enc, best_model_path_dec):
     decoder.load_state_dict(torch.load(best_model_path_dec + 'model.ckpt'))
 
     for batch_idx, (data, target) in enumerate(test_loader):
-        input_batch = input_batch.to(device)
+        data = data[:, :, :args.time_steps, :]  # .contiguous()
+        input_batch = data.to(device)
         target = target.to(device)
 
         logits = encoder(input_batch, send_mask, rec_mask)
@@ -275,9 +277,9 @@ def test(args, best_model_path_enc, best_model_path_dec):
             
         output = decoder(input_batch, edges, send_mask, rec_mask, args.pred_steps)
 
-        target = input_batch[:, :, 1:, :]
+        target_traj = input_batch[:, :, 1:, :]
             
-        loss_reconstrcution = reconstruction_error(output, target)
+        loss_reconstrcution = reconstruction_error(output, target_traj)
             
         # While the KL term for a uniform prior is just the sum of entropies (plus a constant)
         # https://arxiv.org/abs/1802.04687
@@ -285,16 +287,16 @@ def test(args, best_model_path_enc, best_model_path_dec):
 
         loss = loss_reconstrcution + loss_kl
             
-        pred = output.data.max(1, keepdim=True)[1]
+        pred = output.data.max(2, keepdim=True)[1]
         correct = pred.eq(target.data.view_as(pred)).cpu().sum()
-        acc = correct / pred.size(0)
+        acc = correct / (target.size(0) * target.size(1))
 
         loss_kl_test.append(loss_kl.item())
         loss_rec_test.append(loss_reconstrcution.item())
         acc_test.append(acc.item())    
 
     print('-------------testing finish-----------------')
-    print(f'load model from: {best_model_path_dec}')
+    print(f'load model from: {best_model_path_enc},{best_model_path_dec}')
     print(f'test kl loss: {np.mean(loss_kl_test)}')
     print(f'test reconstruction loss: {np.mean(loss_rec_test)}')
     print(f'test acc: {np.mean(acc_test)}')
