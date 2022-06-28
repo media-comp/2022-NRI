@@ -1,6 +1,6 @@
 # 2022 - NRI
 
-Reimplementation of the **N**eural **R**elation **I**nference proposed in the following paper: Kipf, Thomas, et al. "Neural relational inference for interacting systems." *International Conference on Machine Learning*. PMLR, 2018.
+Reimplementation of the **N**eural **R**elation **I**nference proposed in the following paper: Kipf, Thomas, et al. "Neural relational inference for interacting systems." *International Conference on Machine Learning*. PMLR, 2018. This repo is a part of the course [Media Computing in Practice](https://media-comp.github.io/2022/). 
 <p align="center">
 <figure>
 <img src="figures/paper_fig.PNG" alt="Drawing" style="width: 600px;"/>
@@ -78,7 +78,7 @@ The visualization part of `run_encoder.py` is still under consideration.
 <img src="figures/demo_grand_truth.gif" alt="Drawing" style="width: 300px;"/> 
 </figure></td>
 <td> <figure>
-  <img src="figures/step1.gif" alt="Drawing" style="width: 340px;"/>
+  <img src="figures/step1.gif" alt="Drawing" style="width: 300px;"/>
 </figure></td>
 </tr>
 <tr>
